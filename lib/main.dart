@@ -1,178 +1,103 @@
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:music_app/song_list.dart';
+import 'package:music_app/song_play.dart';
 
 typedef void OnError(Exception exception);
 
 void main() {
-  runApp(new MaterialApp(home: new ExampleApp()));
-}
-
-class ExampleApp extends StatefulWidget {
-  @override
-  _ExampleAppState createState() => new _ExampleAppState();
-}
-
-class _ExampleAppState extends State<ExampleApp> {
-  Duration _duration = new Duration();
-  Duration _position = new Duration();
-  AudioPlayer advancedPlayer;
-  AudioCache audioCache;
-
-  @override
-  void initState(){
-    super.initState();
-    initPlayer();
-  }
-
-  void initPlayer(){
-    advancedPlayer = new AudioPlayer();
-    audioCache = new AudioCache(fixedPlayer: advancedPlayer);
-
-    advancedPlayer.durationHandler = (d) => setState(() {
-      _duration = d;
-    });
-
-    advancedPlayer.positionHandler = (p) => setState(() {
-    _position = p;
-    });
-  }
-
-  String localFilePath;
-
-  Widget _tab(List<Widget> children) {
-    return Center(
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          children: children
-              .map((w) => Container(child: w, padding: EdgeInsets.all(6.0)))
-              .toList(),
-        ),
+  runApp(
+    MaterialApp(
+      home: Home(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.dark,
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _btn(String txt, VoidCallback onPressed) {
-    return ButtonTheme(
-        minWidth: 48.0,
-        child: RaisedButton(child: Text(txt), onPressed: onPressed));
-  }
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
 
-  Widget slider() {
-    return Slider(
-        value: _position.inSeconds.toDouble(),
-        min: 0.0,
-        max: _duration.inSeconds.toDouble(),
-        onChanged: (double value) {
-          setState(() {
-            seekToSecond(value.toInt());
-            value = value;
-          });});
-  }
-
-  Widget localAsset() {
-    return _tab([
-      Text('Play Local Asset \'audio.mp3\':'),
-      _btn('Play', () => audioCache.play('audio.mp3')),
-      _btn('Pause',() => advancedPlayer.pause()),
-      _btn('Stop', () => advancedPlayer.stop()),
-      slider()
-    ]);
-  }
-
-  void seekToSecond(int second){
-    Duration newDuration = Duration(seconds: second);
-
-    advancedPlayer.seek(newDuration);
-  }
-
+class _HomeState extends State<Home> {
+  int cur=2000;
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 1,
-      child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            tabs: [
-              Tab(text: 'Local Asset'),
-            ],
-          ),
-          title: Text('audioplayers Example'),
+    return Scaffold(
+        body: ListView(
+      children: <Widget>[
+        Center(
+          child: Text("hello"),
         ),
-        body: TabBarView(
-          children: [localAsset()],
+        Container(
+          height: 450.0,
+          child: new ListView.builder(
+              itemCount: songs.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Column(
+                  children: <Widget>[
+                    Divider(),
+
+                    //Text(song[index]['name']),
+                    ListTile(
+                      title: Text(
+                        songs[index]['name'],
+                        style: TextStyle(color: Colors.lightGreen),
+                      ),
+                      trailing: songs[index]['check']==1?Icon(Icons.local_play):null,
+                      leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: Image.asset(
+                            'assets/${songs[index]['img']}',
+                            height: 60.0,
+                            width: 60.0,
+                          )),
+                          onTap:()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> PlayPage(check, index)),
+                    ),
+                    ),],
+                );
+              }),
         ),
-      ),
-    );
+        Column(
+          children: <Widget>[
+            Text("Now Playing"),
+            SizedBox(height: 20.0,),
+            cur!=2000? _a(cur):Container(child: Text("nothing played"),),
+          ],
+        )
+      ],
+    
+    ));
+  }
+
+  check(int index) {
+    setState(() {
+     cur=index;
+      // songs[index]['check'] = 1;
+      // play=0;
+    });
+    print(songs[index]['check']);
+   
+  }
+  Widget _a(int cur){
+    return ListTile(
+                      title: Text(
+                        songs[cur]['name'],
+                        style: TextStyle(color: Colors.yellow),
+                      ),
+                      trailing: InkWell(child: Icon(Icons.play_arrow),
+                      onTap:()=> Navigator.push(context, MaterialPageRoute(builder: (context)=> PlayPage(check, cur)),),),
+                      leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: Image.asset(
+                            'assets/${songs[cur]['img']}',
+                            height: 60.0,
+                            width: 60.0,
+                          )),
+                          
+                    
+                    );
   }
 }
-
-
-// import 'package:audioplayers/audio_cache.dart';
-// import 'package:audioplayers/audioplayers.dart';
-// import 'package:flutter/material.dart';
-
-// typedef void OnError(Exception exception);
-
-// void main() {
-//   runApp(new MaterialApp(home: new ExampleApp()));
-// }
-
-// class ExampleApp extends StatefulWidget {
-//   @override
-//   _ExampleAppState createState() => new _ExampleAppState();
-// }
-
-// class _ExampleAppState extends State<ExampleApp> {
-//   AudioCache audioCache = new AudioCache();
-//   AudioPlayer advancedPlayer = new AudioPlayer();
-  
-//   String localFilePath;
-
-//   Widget _tab(List<Widget> children) {
-//     return Center(
-//       child: Container(
-//         padding: EdgeInsets.all(16.0),
-//         child: Column(
-//           children: children
-//               .map((w) => Container(child: w, padding: EdgeInsets.all(6.0)))
-//               .toList(),
-//         ),
-//       ),
-//     );
-//   }
-
-//   Widget _btn(String txt, VoidCallback onPressed) {
-//     return ButtonTheme(
-//         minWidth: 48.0,
-//         child: RaisedButton(child: Text(txt), onPressed: onPressed));
-//   }
-
-//   Widget localAsset() {
-//     return _tab([
-//       Text('Play Local Asset \'audio.mp3\':'),
-//       _btn('Play', () => audioCache.play('audio.mp3'))
-//     ]);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return DefaultTabController(
-//       length: 1,
-//       child: Scaffold(
-//         appBar: AppBar(
-//           bottom: TabBar(
-//             tabs: [
-//               Tab(text: 'Local Asset'),
-//             ],
-//           ),
-//           title: Text('audioplayers Example'),
-//         ),
-//         body: TabBarView(
-//           children: [localAsset()],
-//         ),
-//       ),
-//     );
-//   }
-// }
