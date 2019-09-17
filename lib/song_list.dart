@@ -19,7 +19,7 @@ List songName=[
 List songs=[
   {
     "name":"Baarish.mp3",
-    "img":"gazab.jpg",
+    "img":"barish.jpg",
     "check":0,
     "play":0,
   },
@@ -36,8 +36,20 @@ List songs=[
     "play":0,
   },
    {
-    "name": "Sweety Tera Drama - Bareilly Ki Barfi.mp3",
+    "name": "Manma Emotion Jaage.mp3",
     "img":"manwa.jpg",
+    "check":0,
+    "play":0,
+  },
+   {
+    "name": "Sweety Tera Drama - Bareilly Ki Barfi.mp3",
+    "img":"sweety.jpg",
+    "check":0,
+    "play":0,
+  },
+   {
+    "name": "Sweety Tera Drama - Bareilly Ki Barfi.mp3",
+    "img":"sweety.jpg",
     "check":0,
     "play":0,
   },
